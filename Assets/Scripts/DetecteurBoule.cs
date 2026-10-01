@@ -1,5 +1,7 @@
 using UnityEngine;
 
+
+
 /// <summary>
 /// Détecteur de boule qui déclenche des événements lorsque la boule entre ou sort d'une zone.
 /// </summary>
@@ -16,11 +18,17 @@ public class DetecteurBoule : MonoBehaviour
     /// </summary>
     public event System.Action BouleSortie;
 
+    [SerializeField] private Rigidbody balle;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Boule"))
         {
-            BouleEntree?.Invoke();
+           //Ajouter charge d'une de ses deux manières:
+            //BouleEntree.AjouterCharge()
+            //BouleEntree.charge + 1
+
+
         }
     }
 

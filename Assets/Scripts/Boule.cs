@@ -20,6 +20,14 @@ public class Boule : MonoBehaviour
     // Référence au Rigidbody de la boule pour appliquer la physique.
     private Rigidbody rigidbody;
 
+    
+    private int charges = 1;
+
+    private int chargeMax = 3;
+
+
+    private bool jeuxCommencer = false;
+
     /// <summary>
     /// Obtient la vélocité actuelle de la boule.
     /// </summary>
@@ -27,7 +35,16 @@ public class Boule : MonoBehaviour
 
     private void Start()
     {
+
+        if (ControleurJeu.Instance == null)
+            return;
+
+        PlayerInput controles = ControleurJeu.Instance.Controles;
+
         rigidbody = GetComponent<Rigidbody>();
+
+        controles.actions.FindAction("Diriger").performed += CommencerDirection;
+        controles.actions.FindAction("Diriger").canceled += ArreterDirection;
     }
 
     private void OnDestroy()
@@ -50,11 +67,38 @@ public class Boule : MonoBehaviour
         {
             cibleCamera.position = rigidbody.position;
         }
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            jeuxCommencer = true;
+            Commencer();
+        }
     }
 
     private void FixedUpdate()
     {
         Diriger();
+
+    }
+
+    private void Commencer()
+    {
+
+        if (!rigidbody)
+        {
+            rigidbody = GetComponent<Rigidbody>();
+        }
+
+
+        rigidbody.useGravity = true;
+
+        if (ControleurJeu.Instance == null)
+            return;
+
+        PlayerInput controles = ControleurJeu.Instance.Controles;
+
+        controles.actions.FindAction("Diriger").performed += CommencerDirection;
+        controles.actions.FindAction("Diriger").canceled += ArreterDirection;
     }
 
     private void CommencerDirection(InputAction.CallbackContext contexte)
@@ -72,6 +116,14 @@ public class Boule : MonoBehaviour
         if(!Mathf.Approximately(forceAppliquee.sqrMagnitude, 0.0f))
         {
             rigidbody.AddForce(forceAppliquee, ForceMode.Force);
+        }
+    }
+    
+    public void AjouterCharge()
+    {
+        if (charges < chargeMax)
+        {
+            charges += 1;
         }
     }
 }
